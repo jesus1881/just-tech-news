@@ -3,7 +3,6 @@ const { User, Post, Vote, Comment } = require('../../models');
 
 // GET /api/users
 router.get('/', (req, res) => {
-    // Access our User model and run .findAll() method)
     User.findAll({
         attributes: { exclude: ['password'] }
     })
@@ -26,7 +25,6 @@ router.get('/:id', (req, res) => {
                 model: Post,
                 attributes: ['id', 'title', 'post_url', 'created_at']
             },
-            // include the Comment model here:
             {
                 model: Comment,
                 attributes: ['id', 'comment_text', 'created_at'],
@@ -45,7 +43,7 @@ router.get('/:id', (req, res) => {
     })
         .then(dbUserData => {
             if (!dbUserData) {
-                res.status(404).json({ message: 'No user found with this id' });
+                res.status(404).json({ message: 'No user found with this id!' });
                 return;
             }
             res.json(dbUserData);
@@ -58,7 +56,6 @@ router.get('/:id', (req, res) => {
 
 // POST /api/users
 router.post('/', (req, res) => {
-    // expects {username: 'Lernantino', email: 'lernantino@gmail.com', password: 'password1234'}
     User.create({
         username: req.body.username,
         email: req.body.email,
@@ -71,8 +68,8 @@ router.post('/', (req, res) => {
         });
 });
 
+// POST /api/users/login
 router.post('/login', (req, res) => {
-    // expects {email: 'lernantino@gmail.com', password: 'password1234'}
     User.findOne({
         where: {
             email: req.body.email
@@ -82,23 +79,17 @@ router.post('/login', (req, res) => {
             res.status(400).json({ message: 'No user with that email address!' });
             return;
         }
-
-        // Verify user
         const validPassword = dbUserData.checkPassword(req.body.password);
         if (!validPassword) {
             res.status(400).json({ message: 'Incorrect password!' });
             return;
         }
-
         res.json({ user: dbUserData, message: 'You are now logged in!' });
-    });
+    })
 });
 
 // PUT /api/users/1
 router.put('/:id', (req, res) => {
-    // expects {username: 'Lernantino', email: 'lernantino@gmail.com', password: 'password1234'}
-
-    // if req.body has exact key/value pairs to match the model, you can just use `req.body` instead
     User.update(req.body, {
         individualHooks: true,
         where: {
@@ -107,7 +98,7 @@ router.put('/:id', (req, res) => {
     })
         .then(dbUserData => {
             if (!dbUserData[0]) {
-                res.status(404).json({ message: 'No user found with this id' });
+                res.status(400).json({ message: 'No user found with this id!' });
                 return;
             }
             res.json(dbUserData);
@@ -118,7 +109,7 @@ router.put('/:id', (req, res) => {
         });
 });
 
-// DELETE /api/users/id
+// DELETE /api/users/1
 router.delete('/:id', (req, res) => {
     User.destroy({
         where: {
@@ -127,7 +118,7 @@ router.delete('/:id', (req, res) => {
     })
         .then(dbUserData => {
             if (!dbUserData) {
-                res.status(404).json({ message: 'No user found with this id' });
+                res.status(400).json({ message: 'No user found with this id!' });
                 return;
             }
             res.json(dbUserData);
@@ -137,6 +128,5 @@ router.delete('/:id', (req, res) => {
             res.status(500).json(err);
         });
 });
-
 
 module.exports = router;

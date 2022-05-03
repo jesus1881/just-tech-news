@@ -1,8 +1,6 @@
 const router = require('express').Router();
-const { Post, User, Vote, Comment } = require('../../models');
-const { create } = require('../../models/User');
 const sequelize = require('../../config/connection');
-
+const { Post, User, Vote, Comment } = require('../../models');
 
 // GET /api/posts
 router.get('/', (req, res) => {
@@ -132,17 +130,5 @@ router.delete('/:id', (req, res) => {
             res.status(500).json(err);
         });
 });
-
-// Find post
-/*Post.findAll({
-    attributes: ['id', 'post_url', 'title', 'created_at'],
-    order: [['created_at', 'DESC']],
-    include: [
-        {
-            model: User,
-            attributes: ['username']
-        }
-    ]
-})*/
 
 module.exports = router;
