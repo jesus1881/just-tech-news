@@ -2,6 +2,7 @@ const router = require('express').Router();
 const sequelize = require('../../config/connection');
 const { Post, User, Vote, Comment } = require('../../models');
 
+
 // GET /api/posts
 router.get('/', (req, res) => {
     console.log('===================');
